@@ -16,10 +16,6 @@
     -moz-osx-font-smoothing: grayscale;
   }
   
-  * {
-    @apply border-border;
-  }
-  
   *::selection {
     @apply bg-primary-200 text-primary-900;
   }
