@@ -35,9 +35,16 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <body className={`${inter.className} antialiased`}>
-        <div className="min-h-screen flex flex-col gradient-bg">
+        <div className="min-h-screen flex flex-col gradient-bg-animated">
+          {/* Floating background shapes */}
+          <div className="floating-shapes">
+            <div className="floating-shape floating-shape-1"></div>
+            <div className="floating-shape floating-shape-2"></div>
+            <div className="floating-shape floating-shape-3"></div>
+          </div>
+          
           <Header />
-          <main className="flex-grow">
+          <main className="flex-grow relative z-10">
             {children}
           </main>
           <Footer />

@@ -27,7 +27,7 @@ export async function getAllPosts(): Promise<BlogPost[]> {
   
   try {
     fileNames = fs.readdirSync(postsDirectory)
-  } catch (error) {
+  } catch {
     // If directory doesn't exist or is empty, return sample posts
     return getSamplePosts()
   }
