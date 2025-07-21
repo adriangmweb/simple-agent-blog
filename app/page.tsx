@@ -17,7 +17,7 @@ export default async function Home() {
         <div className="container-custom relative z-10">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-4">
-              Find What You're <span className="text-gradient">Looking For</span>
+              Find What You&apos;re <span className="text-gradient">Looking For</span>
             </h2>
             <p className="text-lg text-neutral-600 max-w-2xl mx-auto mb-8">
               Search through our entire content library to discover articles, tutorials, and insights tailored to your interests.

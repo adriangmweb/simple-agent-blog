@@ -99,7 +99,9 @@ export async function getPostsByCategory(category: string): Promise<BlogPost[]> 
 
 export async function getAllCategories(): Promise<string[]> {
   const allPosts = await getAllPosts()
-  const categories = [...new Set(allPosts.map(post => post.category))]
+  const categorySet = new Set(allPosts.map(post => post.category))
+  const categories: string[] = []
+  categorySet.forEach(category => categories.push(category))
   return categories.sort()
 }
 

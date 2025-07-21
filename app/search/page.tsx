@@ -1,11 +1,11 @@
 'use client'
-import { useState, useEffect } from 'react'
-import { Search, Filter, Grid, List, Calendar, User, Clock, Tag } from 'lucide-react'
+import { useState, useEffect, Suspense } from 'react'
+import { Search, Grid, List, Calendar, User, Clock, Tag } from 'lucide-react'
 import { BlogPost } from '@/lib/posts'
 import BlogCard from '@/components/BlogCard'
 import { useSearchParams } from 'next/navigation'
 
-export default function SearchPage() {
+function SearchContent() {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<BlogPost[]>([])
   const [categories, setCategories] = useState<string[]>([])
@@ -54,11 +54,11 @@ export default function SearchPage() {
         const response = await fetch(`/api/search?${params}`)
         const data = await response.json()
         
-        let sortedResults = data.posts || []
+        const sortedResults = data.posts || []
         
         // Sort results
         sortedResults.sort((a: BlogPost, b: BlogPost) => {
-          let aValue, bValue
+          let aValue: string | number, bValue: string | number
           
           switch (sortBy) {
             case 'title':
@@ -118,7 +118,7 @@ export default function SearchPage() {
           </h1>
           
           <p className="text-xl md:text-2xl text-neutral-600 max-w-3xl mx-auto leading-relaxed">
-            Find exactly what you're looking for across our entire content library.
+            Find exactly what you&apos;re looking for across our entire content library.
           </p>
         </div>
 
@@ -162,8 +162,8 @@ export default function SearchPage() {
                 value={`${sortBy}-${sortOrder}`}
                 onChange={(e) => {
                   const [sort, order] = e.target.value.split('-')
-                  setSortBy(sort as any)
-                  setSortOrder(order as any)
+                  setSortBy(sort as 'date' | 'title' | 'readTime')
+                  setSortOrder(order as 'asc' | 'desc')
                 }}
                 className="bg-white/90 border border-neutral-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
               >
@@ -293,7 +293,7 @@ export default function SearchPage() {
             </h3>
             <p className="text-neutral-600 max-w-md mx-auto">
               {query || selectedCategory 
-                ? 'Try adjusting your search terms or filters to find what you\'re looking for.'
+                ? 'Try adjusting your search terms or filters to find what you&apos;re looking for.'
                 : 'Enter a search term above to find articles, topics, and more.'
               }
             </p>
@@ -301,5 +301,22 @@ export default function SearchPage() {
         )}
       </div>
     </div>
+  )
+}
+
+export default function SearchPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen pt-8 pb-20">
+        <div className="container-custom">
+          <div className="text-center py-20">
+            <div className="animate-spin w-8 h-8 border-2 border-primary-600 border-t-transparent rounded-full mx-auto"></div>
+            <span className="mt-3 text-neutral-600 block">Loading search...</span>
+          </div>
+        </div>
+      </div>
+    }>
+      <SearchContent />
+    </Suspense>
   )
 }
