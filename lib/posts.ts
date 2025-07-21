@@ -68,6 +68,43 @@ export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
   return posts.find(post => post.slug === slug) || null
 }
 
+export async function searchPosts(query: string): Promise<BlogPost[]> {
+  if (!query.trim()) {
+    return []
+  }
+
+  const allPosts = await getAllPosts()
+  const searchQuery = query.toLowerCase()
+
+  return allPosts.filter(post => {
+    // Search in title, excerpt, content (stripped of HTML), author, and category
+    const searchableContent = [
+      post.title,
+      post.excerpt,
+      post.content.replace(/<[^>]*>/g, ''), // Strip HTML tags
+      post.author,
+      post.category
+    ].join(' ').toLowerCase()
+
+    return searchableContent.includes(searchQuery)
+  })
+}
+
+export async function getPostsByCategory(category: string): Promise<BlogPost[]> {
+  const allPosts = await getAllPosts()
+  return allPosts.filter(post => 
+    post.category.toLowerCase() === category.toLowerCase()
+  )
+}
+
+export async function getAllCategories(): Promise<string[]> {
+  const allPosts = await getAllPosts()
+  const categorySet = new Set(allPosts.map(post => post.category))
+  const categories: string[] = []
+  categorySet.forEach(category => categories.push(category))
+  return categories.sort()
+}
+
 function getSamplePosts(): BlogPost[] {
   return [
     {

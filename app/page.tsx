@@ -1,6 +1,7 @@
 import { getAllPosts } from '@/lib/posts'
 import BlogCard from '@/components/BlogCard'
 import Hero from '@/components/Hero'
+import SearchBox from '@/components/SearchBox'
 
 export default async function Home() {
   const posts = await getAllPosts()
@@ -8,6 +9,34 @@ export default async function Home() {
   return (
     <div className="relative">
       <Hero />
+      
+      {/* Search Section */}
+      <section className="py-16 lg:py-20 relative">
+        <div className="absolute inset-0 bg-gradient-to-b from-white/40 via-white/60 to-white/80 backdrop-blur-sm"></div>
+        
+        <div className="container-custom relative z-10">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-4">
+              Find What You&apos;re <span className="text-gradient">Looking For</span>
+            </h2>
+            <p className="text-lg text-neutral-600 max-w-2xl mx-auto mb-8">
+              Search through our entire content library to discover articles, tutorials, and insights tailored to your interests.
+            </p>
+          </div>
+          
+          <div className="max-w-2xl mx-auto">
+            <SearchBox className="mb-6" />
+            <div className="text-center">
+              <a 
+                href="/search" 
+                className="inline-flex items-center text-primary-600 hover:text-primary-700 font-medium transition-colors"
+              >
+                Advanced Search Options →
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
       
       {/* Latest Articles Section */}
       <section id="latest" className="py-20 lg:py-32 relative">
