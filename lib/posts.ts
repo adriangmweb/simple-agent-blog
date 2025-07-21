@@ -17,6 +17,20 @@ export interface BlogPost {
   category: string
 }
 
+export interface SearchResult {
+  post: BlogPost
+  score: number
+  matchedFields: string[]
+}
+
+export interface SearchOptions {
+  query: string
+  category?: string
+  author?: string
+  sortBy?: 'relevance' | 'date' | 'title'
+  sortOrder?: 'asc' | 'desc'
+}
+
 export async function getAllPosts(): Promise<BlogPost[]> {
   // Create posts directory if it doesn't exist
   if (!fs.existsSync(postsDirectory)) {
@@ -66,6 +80,118 @@ export async function getAllPosts(): Promise<BlogPost[]> {
 export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
   const posts = await getAllPosts()
   return posts.find(post => post.slug === slug) || null
+}
+
+export async function searchPosts(options: SearchOptions): Promise<SearchResult[]> {
+  const allPosts = await getAllPosts()
+  const { query, category, author, sortBy = 'relevance', sortOrder = 'desc' } = options
+  
+  if (!query.trim()) {
+    return []
+  }
+
+  const searchTerms = query.toLowerCase().split(/\s+/).filter(term => term.length > 0)
+  
+  const results: SearchResult[] = allPosts
+    .map(post => {
+      let score = 0
+      const matchedFields: string[] = []
+      
+      // Apply filters first
+      if (category && post.category.toLowerCase() !== category.toLowerCase()) {
+        return null
+      }
+      
+      if (author && post.author.toLowerCase() !== author.toLowerCase()) {
+        return null
+      }
+      
+      // Search in title (highest weight)
+      const titleMatches = searchTerms.filter(term => 
+        post.title.toLowerCase().includes(term)
+      ).length
+      if (titleMatches > 0) {
+        score += titleMatches * 10
+        matchedFields.push('title')
+      }
+      
+      // Search in excerpt (medium weight)
+      const excerptMatches = searchTerms.filter(term => 
+        post.excerpt.toLowerCase().includes(term)
+      ).length
+      if (excerptMatches > 0) {
+        score += excerptMatches * 5
+        matchedFields.push('excerpt')
+      }
+      
+      // Search in category (medium weight)
+      const categoryMatches = searchTerms.filter(term => 
+        post.category.toLowerCase().includes(term)
+      ).length
+      if (categoryMatches > 0) {
+        score += categoryMatches * 5
+        matchedFields.push('category')
+      }
+      
+      // Search in author (low weight)
+      const authorMatches = searchTerms.filter(term => 
+        post.author.toLowerCase().includes(term)
+      ).length
+      if (authorMatches > 0) {
+        score += authorMatches * 3
+        matchedFields.push('author')
+      }
+      
+      // Search in content (lowest weight, stripped of HTML)
+      const contentText = post.content.replace(/<[^>]*>/g, '').toLowerCase()
+      const contentMatches = searchTerms.filter(term => 
+        contentText.includes(term)
+      ).length
+      if (contentMatches > 0) {
+        score += contentMatches * 1
+        matchedFields.push('content')
+      }
+      
+      // Only return posts with matches
+      if (score > 0) {
+        return { post, score, matchedFields }
+      }
+      
+      return null
+    })
+    .filter((result): result is SearchResult => result !== null)
+  
+  // Sort results
+  results.sort((a, b) => {
+    switch (sortBy) {
+      case 'date':
+        const dateA = new Date(a.post.date).getTime()
+        const dateB = new Date(b.post.date).getTime()
+        return sortOrder === 'asc' ? dateA - dateB : dateB - dateA
+      case 'title':
+        const titleA = a.post.title.toLowerCase()
+        const titleB = b.post.title.toLowerCase()
+        const titleComparison = titleA.localeCompare(titleB)
+        return sortOrder === 'asc' ? titleComparison : -titleComparison
+      case 'relevance':
+      default:
+        return sortOrder === 'asc' ? a.score - b.score : b.score - a.score
+    }
+  })
+  
+  return results
+}
+
+export async function getCategories(): Promise<string[]> {
+  const allPosts = await getAllPosts()
+  const categories = Array.from(new Set(allPosts.map(post => post.category)))
+  return categories.sort()
+}
+
+export async function getAuthors(): Promise<string[]> {
+  const allPosts = await getAllPosts()
+  const authors = Array.from(new Set(allPosts.map(post => post.author)))
+  return authors.sort()
 }
 
 function getSamplePosts(): BlogPost[] {

@@ -2,6 +2,7 @@
 import Link from 'next/link'
 import { Menu, X, Sparkles } from 'lucide-react'
 import { useState } from 'react'
+import SearchInput from './SearchInput'
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -17,37 +18,49 @@ export default function Header() {
             <span className="text-2xl font-bold text-gradient">Modern Blog</span>
           </Link>
           
-          <nav className="hidden md:flex items-center space-x-8">
-            <Link 
-              href="/" 
-              className="relative px-4 py-2 text-neutral-700 hover:text-primary-600 font-medium transition-all duration-300 group"
-            >
-              Home
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-primary-600 to-secondary-600 group-hover:w-full transition-all duration-300"></span>
-            </Link>
-            <Link 
-              href="/preview" 
-              className="relative px-4 py-2 text-neutral-700 hover:text-primary-600 font-medium transition-all duration-300 group"
-            >
-              Preview
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-primary-600 to-secondary-600 group-hover:w-full transition-all duration-300"></span>
-            </Link>
-            <Link 
-              href="/about" 
-              className="relative px-4 py-2 text-neutral-700 hover:text-primary-600 font-medium transition-all duration-300 group"
-            >
-              About
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-primary-600 to-secondary-600 group-hover:w-full transition-all duration-300"></span>
-            </Link>
+          <div className="hidden md:flex items-center space-x-8">
+            <nav className="flex items-center space-x-8">
+              <Link 
+                href="/" 
+                className="relative px-4 py-2 text-neutral-700 hover:text-primary-600 font-medium transition-all duration-300 group"
+              >
+                Home
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-primary-600 to-secondary-600 group-hover:w-full transition-all duration-300"></span>
+              </Link>
+              <Link 
+                href="/preview" 
+                className="relative px-4 py-2 text-neutral-700 hover:text-primary-600 font-medium transition-all duration-300 group"
+              >
+                Preview
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-primary-600 to-secondary-600 group-hover:w-full transition-all duration-300"></span>
+              </Link>
+              <Link 
+                href="/about" 
+                className="relative px-4 py-2 text-neutral-700 hover:text-primary-600 font-medium transition-all duration-300 group"
+              >
+                About
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-primary-600 to-secondary-600 group-hover:w-full transition-all duration-300"></span>
+              </Link>
+              <Link 
+                href="/search" 
+                className="relative px-4 py-2 text-neutral-700 hover:text-primary-600 font-medium transition-all duration-300 group"
+              >
+                Search
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-primary-600 to-secondary-600 group-hover:w-full transition-all duration-300"></span>
+              </Link>
+            </nav>
+            
+            {/* Search Input */}
+            <SearchInput variant="header" placeholder="Search..." />
             
             {/* CTA Button */}
             <Link 
               href="/preview" 
-              className="ml-4 px-6 py-2.5 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-semibold rounded-xl shadow-lg shadow-primary-500/30 hover:shadow-primary-600/40 transition-all duration-300 transform hover:scale-105 active:scale-95"
+              className="px-6 py-2.5 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-semibold rounded-xl shadow-lg shadow-primary-500/30 hover:shadow-primary-600/40 transition-all duration-300 transform hover:scale-105 active:scale-95"
             >
               Get Started
             </Link>
-          </nav>
+          </div>
           
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -82,6 +95,13 @@ export default function Header() {
                   onClick={() => setIsMenuOpen(false)}
                 >
                   About
+                </Link>
+                <Link 
+                  href="/search" 
+                  className="px-4 py-3 text-neutral-700 hover:text-primary-600 font-medium transition-all duration-300 rounded-xl hover:bg-white/20"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Search
                 </Link>
                 <Link 
                   href="/preview" 
